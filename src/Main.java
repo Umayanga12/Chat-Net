@@ -77,7 +77,6 @@ public class Main {
 
             } catch (IOException e) {
                 System.out.println(e);
-                throw new RuntimeException(e);
             }finally {
                 // if the user log out from the application need to remove the related sockets,names and etc
                 if (names != null){

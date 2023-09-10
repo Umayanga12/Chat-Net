@@ -2,7 +2,10 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.Socket;
 
 public class client {
     BufferedReader in ;
@@ -29,8 +32,58 @@ public class client {
             }
         });
 
-        //getting the server address
-        
+    }
+
+    //getting the server ip address
+    private String getserveraddress(){
+        return JOptionPane.showInputDialog(
+                frame,
+                "Enter the Ip Address of the server : ",
+                "Welcome to Chat-Net",
+                JOptionPane.QUESTION_MESSAGE
+
+        );
+    }
+
+    //getting the username from the user
+    private String getusername(){
+        return JOptionPane.showInputDialog(
+                frame,
+                "Enter the User name : ",
+                "Login detal ",
+                JOptionPane.PLAIN_MESSAGE
+        );
+    }
+
+    private void run() throws IOException{
+        String serverAddress = getserveraddress();
+        Socket socket = new Socket(serverAddress, 9001);
+
+        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        out = new PrintWriter(socket.getOutputStream(), true);
+
+        while (true){
+            String line = in.readLine();
+            
+            if (line.startsWith("Username")){
+                out.println(getusername());
+            } else if (line.startsWith("NAME ACCEPTED")) {
+                textField.setEditable(true);
+            } else if (line.startsWith("Message")) {
+                textarea.append(line.substring(8)+ "\n");
+                
+            }
+
+        }
 
     }
+
+    public static void main(String[] args) throws Exception{
+        client cli = new client();
+        cli.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        cli.frame.setVisible(true);
+        cli.run();
+    }
+
+
 }
